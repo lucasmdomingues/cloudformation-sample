@@ -1,0 +1,36 @@
+Parameters:
+  SecurityGroupDescription:
+    Description: Descrição do Security Group
+    Type: String
+  CidrIpDescription:
+    Description: Descrição do IP para acesso SSH
+    Type: String
+
+Resources:
+  MyInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      AvailabilityZone: sa-east-1a
+      ImageId: ami-07bfd9965e7b972d1
+      InstanceType: t2.micro
+      SecurityGroups:
+        - !Ref ServerSecurityGroup
+
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Ref SecurityGroupDescription
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref CidrIpDescription
+
+  MyEIP:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref MyInstance
